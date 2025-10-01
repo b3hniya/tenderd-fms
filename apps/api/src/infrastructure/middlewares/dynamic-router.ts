@@ -21,7 +21,7 @@ const dynamicRouter = async (modulesDir: string): Promise<Router> => {
   const loadModuleControllers = async (moduleDir: string) => {
     const moduleName = path.basename(moduleDir);
     const controllersDir = path.join(moduleDir, "controllers");
-    
+
     if (!fs.existsSync(controllersDir)) {
       if (MODE === "DEV") {
         console.log(chalk.yellow(`No controllers directory found in module: ${moduleName}`));
@@ -41,11 +41,17 @@ const dynamicRouter = async (modulesDir: string): Promise<Router> => {
           try {
             const controller = await import(pathToFileURL(fullPath).href);
 
-            // Create route: /moduleName/relativePath/controllerName
             const controllerName = toKebabCase(item.replace(".controller.ts", ""));
-            const routePath = relativePath 
-              ? `/${moduleName}/${relativePath}/${controllerName}`
-              : `/${moduleName}/${controllerName}`;
+
+            const shouldOmitControllerName = controllerName === moduleName;
+
+            const routePath = shouldOmitControllerName
+              ? relativePath
+                ? `/${moduleName}/${relativePath}`
+                : `/${moduleName}`
+              : relativePath
+                ? `/${moduleName}/${relativePath}/${controllerName}`
+                : `/${moduleName}/${controllerName}`;
 
             if (controller.put) router.put(routePath, controller.put);
             if (controller.get) router.get(routePath, controller.get);
@@ -64,7 +70,9 @@ const dynamicRouter = async (modulesDir: string): Promise<Router> => {
 
               // Log the route for debugging
               if (methods.length > 0) {
-                console.log(chalk.green(`Module: ${moduleName} - Route: ${routePath} with methods: ${methods.join(", ")}`));
+                console.log(
+                  chalk.green(`Module: ${moduleName} - Route: ${routePath} with methods: ${methods.join(", ")}`)
+                );
               } else {
                 console.log(chalk.yellow(`No methods found for route: ${routePath} in module: ${moduleName}`));
               }
@@ -83,7 +91,7 @@ const dynamicRouter = async (modulesDir: string): Promise<Router> => {
   // Scan all modules in the modules directory
   if (fs.existsSync(modulesDir)) {
     const modules = fs.readdirSync(modulesDir);
-    
+
     for (const module of modules) {
       const modulePath = path.join(modulesDir, module);
       if (fs.statSync(modulePath).isDirectory()) {

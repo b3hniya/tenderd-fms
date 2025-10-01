@@ -1,13 +1,34 @@
 {
   "name": "@tenderd-fms/core-types",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "description": "Shared types for Tenderd Fleet Management System",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./enums": "./src/enums/index.ts",
+    "./entity": "./src/entity/index.ts",
+    "./shared": "./src/shared/index.ts",
+    "./api": "./src/api/index.ts",
+    "./api/vehicle": "./src/api/vehicle/index.ts",
+    "./api/telemetry": "./src/api/telemetry/index.ts",
+    "./api/maintenance": "./src/api/maintenance/index.ts",
+    "./api/analytics": "./src/api/analytics/index.ts",
+    "./websocket": "./src/websocket/index.ts"
   },
-  "keywords": [],
+  "scripts": {
+    "build": "echo \"No build step needed for TypeScript source\"",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "types",
+    "fleet-management",
+    "shared"
+  ],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.10.0"
+  "packageManager": "pnpm@10.10.0",
+  "dependencies": {
+    "zod": "^3.22.4"
+  }
 }

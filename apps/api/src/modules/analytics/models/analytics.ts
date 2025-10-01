@@ -2,36 +2,28 @@ import mongoose, { Document, Schema } from "mongoose";
 
 export interface IDailyAnalytics extends Document {
   vehicleId: string;
-  date: Date; 
+  date: Date;
 
-  // Distance
   distanceTraveled: number; // km
 
-  // Time
   hoursOperated: number; // hours (engine running)
   hoursIdle: number; // hours (engine on, speed = 0)
 
-  // Speed
   averageSpeed: number; // km/h
   maxSpeed: number; // km/h
 
-  // Fuel
   fuelConsumed: number; // liters
   fuelEfficiency: number; // km per liter
 
-  // Engine
   averageEngineTemp: number; // celsius
   maxEngineTemp: number; // celsius
 
-  // Trips
   tripCount: number; // Number of trips (engine on → off)
 
-  // Data Quality
   dataPoints: number; // Number of telemetry records
   validDataPoints: number; // Number with contextValid=true
   dataQuality: number; // Percentage (validDataPoints / dataPoints)
 
-  // Metadata
   calculatedAt: Date;
   recalculatedCount: number; // How many times recalculated (for late data)
 }
@@ -137,4 +129,3 @@ export const DailyAnalytics = mongoose.model<IDailyAnalytics>(
   DailyAnalyticsSchema,
   "daily_analytics"
 );
-

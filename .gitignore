@@ -59,3 +59,5 @@ pnpm-lock.yaml
 *JobProfileData_*.json
 *ContactData_*.json
 *AccountData_*.json
+
+.docs

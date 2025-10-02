@@ -17,6 +17,7 @@ module.exports = {
     "^@tenderd-fms/core-types$": "<rootDir>/../../libs/core-types/src",
     "^../../../infrastructure/configs/logger$": "<rootDir>/src/__tests__/mocks/logger.ts",
     "^../../../../infrastructure/configs/logger$": "<rootDir>/src/__tests__/mocks/logger.ts",
+    "^../../../../infrastructure/event-source/event-bus$": "<rootDir>/src/__tests__/mocks/event-bus.ts",
   },
   setupFilesAfterEnv: ["<rootDir>/src/__tests__/setup.ts"],
   testTimeout: 30000,

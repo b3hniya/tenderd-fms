@@ -34,7 +34,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <Dialog open={sidebarOpen} onClose={setSidebarOpen} className="relative z-50 xl:hidden">
           <DialogBackdrop
             transition
-            className="fixed inset-0 bg-gray-900/80 transition-opacity duration-300 ease-linear data-closed:opacity-0"
+            className="fixed inset-0 bg-gray-500/80 transition-opacity duration-300 ease-linear data-closed:opacity-0"
           />
 
           <div className="fixed inset-0 flex">
@@ -211,7 +211,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </div>
           </div>
 
-          <main className="lg:pr-96">{children}</main>
+          <main className="">{children}</main>
         </div>
       </div>
     </>

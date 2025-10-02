@@ -13,7 +13,11 @@ const nextConfig: NextConfig = {
 
     return config;
   },
-  transpilePackages: [],
+  transpilePackages: [
+    '@tenderd-fms/core-types',
+    '@tenderd-fms/api-client',
+    '@tenderd-fms/websocket-client',
+  ],
 };
 
 export default nextConfig;

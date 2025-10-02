@@ -59,8 +59,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <div className="relative flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 ring ring-white/10 before:pointer-events-none before:absolute before:inset-0 before:bg-black/10">
                 <div className="relative flex h-16 shrink-0 items-center">
                   <img
-                    alt="Your Company"
-                    src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
+                    alt="Tenderd"
+                    src="https://tenderd.com/wp-content/uploads/2025/07/Tenderd-logo-white.svg"
                     className="h-8 w-auto"
                   />
                 </div>
@@ -125,9 +125,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-black/10 px-6 ring-1 ring-white/5">
             <div className="flex h-16 shrink-0 items-center">
               <img
-                alt="Your Company"
-                src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
-                className="h-8 w-auto"
+                alt="Tenderd"
+                src="https://tenderd.com/wp-content/uploads/2025/07/Tenderd-logo-white.svg"
+                className="h-6 w-auto"
               />
             </div>
             <nav className="flex flex-1 flex-col">

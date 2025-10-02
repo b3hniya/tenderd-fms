@@ -1,0 +1,44 @@
+{
+  "name": "@tenderd-fms/websocket-client",
+  "version": "1.0.0",
+  "description": "Type-safe WebSocket client for Tenderd Fleet Management System",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./mock": {
+      "import": "./dist/mock/mock-client.js",
+      "types": "./dist/mock/mock-client.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "websocket",
+    "socket.io",
+    "typescript",
+    "client",
+    "fleet-management"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@tenderd-fms/core-types": "workspace:*",
+    "socket.io-client": "^4.8.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.9.0",
+    "typescript": "^5.2.2"
+  },
+  "peerDependencies": {
+    "@tenderd-fms/core-types": "workspace:*"
+  }
+}

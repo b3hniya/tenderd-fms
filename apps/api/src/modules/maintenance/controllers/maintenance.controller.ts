@@ -164,28 +164,88 @@ export const patch = asyncControllerWrapper(async (req: Request, res: Response, 
  * @swagger
  * /api/maintenance:
  *   get:
- *     summary: Get maintenance record by ID
+ *     summary: Get maintenance records (by ID, vehicle, or paginated list)
  *     tags: [Maintenance]
  *     parameters:
  *       - in: query
  *         name: id
- *         required: true
  *         schema:
  *           type: string
- *         description: Maintenance record ID
+ *         description: Maintenance record ID (returns single record)
+ *       - in: query
+ *         name: vehicleId
+ *         schema:
+ *           type: string
+ *         description: Filter by vehicle ID
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [SCHEDULED, IN_PROGRESS, COMPLETED, CANCELLED]
+ *         description: Filter by status
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Items per page
  *     responses:
  *       200:
- *         description: Maintenance record retrieved successfully
+ *         description: Maintenance records retrieved successfully
  *       404:
  *         description: Maintenance record not found
  */
 export const get = asyncControllerWrapper(async (req: Request, res: Response, next: NextFunction) => {
-  const query = new GetMaintenanceByIdQuery(req.query.id as string);
+  const { id, vehicleId, status, page, limit } = req.query;
 
-  const result = await queryBus.execute(query);
+  // If ID is provided, return single record
+  if (id) {
+    const query = new GetMaintenanceByIdQuery(id as string);
+    const result = await queryBus.execute(query);
+
+    return res.status(200).json({
+      success: true,
+      data: result,
+    });
+  }
+
+  // Otherwise, return paginated list with filters
+  const { Maintenance } = await import("../models/maintenance");
+
+  const pageNum = parseInt(page as string) || 1;
+  const limitNum = parseInt(limit as string) || 10;
+  const skip = (pageNum - 1) * limitNum;
+
+  // Build filter
+  const filter: any = {};
+  if (vehicleId) filter.vehicleId = vehicleId;
+  if (status) filter.status = status;
+
+  // Execute query with pagination
+  const [data, total] = await Promise.all([
+    Maintenance.find(filter)
+      .populate("vehicleId", "vin licensePlate manufacturer vehicleModel")
+      .sort({ scheduledDate: -1 })
+      .skip(skip)
+      .limit(limitNum)
+      .lean(),
+    Maintenance.countDocuments(filter),
+  ]);
 
   res.status(200).json({
     success: true,
-    data: result,
+    data,
+    pagination: {
+      page: pageNum,
+      limit: limitNum,
+      total,
+      totalPages: Math.ceil(total / limitNum),
+    },
   });
 });

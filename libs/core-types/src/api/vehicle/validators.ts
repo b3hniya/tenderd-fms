@@ -63,7 +63,7 @@ export const GetVehicleByIdRequestSchema = z.object({
 
 export const GetAllVehiclesRequestSchema = z.object({
   page: z.number().int().min(1).optional().default(1),
-  limit: z.number().int().min(1).max(100).optional().default(10),
+  limit: z.number().int().min(1).max(10000).optional().default(10),
   status: z.nativeEnum(VehicleStatus).optional(),
   type: z.nativeEnum(VehicleType).optional(),
 });

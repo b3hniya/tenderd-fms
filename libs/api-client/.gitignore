@@ -4,8 +4,8 @@ node_modules
 # Build output
 dist
 
-# Generated code
-src/generated
+# Generated code - KEEP IN GIT for consumer packages
+# src/generated
 
 # Logs
 *.log

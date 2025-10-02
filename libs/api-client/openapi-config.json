@@ -1,0 +1,12 @@
+{
+  "input": "http://localhost:4000/api-docs-json",
+  "output": "./src/generated",
+  "httpClient": "axios",
+  "useOptions": true,
+  "useUnionTypes": true,
+  "clientName": "TenderdFmsApiClient",
+  "exportCore": true,
+  "exportServices": true,
+  "exportModels": true,
+  "exportSchemas": false
+}

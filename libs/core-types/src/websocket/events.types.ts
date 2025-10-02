@@ -1,4 +1,4 @@
-import { Vehicle, Telemetry } from '../entity';
+import type { Telemetry } from '../entity';
 import { ConnectionStatus } from '../enums';
 
 export interface VehicleUpdateEvent {
@@ -40,7 +40,6 @@ export interface AlertEvent {
   timestamp: Date;
 }
 
-// Client -> Server Events
 export interface SubscribeToVehicleRequest {
   vehicleId: string;
 }
@@ -49,7 +48,6 @@ export interface UnsubscribeFromVehicleRequest {
   vehicleId: string;
 }
 
-// Server -> Client Events
 export type WebSocketEvent =
   | { type: 'vehicle-update'; data: VehicleUpdateEvent }
   | { type: 'vehicle-status-change'; data: VehicleStatusChangeEvent }

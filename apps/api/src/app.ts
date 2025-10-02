@@ -47,6 +47,12 @@ const createApp = async (): Promise<Express> => {
   console.log("  ✅ CQRS setup complete");
 
   console.log("  📖 Setting up Swagger docs...");
+
+  app.get("/api-docs-json", (req, res) => {
+    res.setHeader("Content-Type", "application/json");
+    res.send(swaggerSpec);
+  });
+
   app.use(
     "/api-docs",
     swaggerUi.serve,

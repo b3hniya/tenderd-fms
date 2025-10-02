@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { GetVehicleByIdQuery } from "../../queries/get-vehicle-by-id/get-vehicle-by-id.query";
 // import { CreateVehicleCommand } from "../../commands/create-vehicle/create-vehicle-command";
 // import { GetVehicleByIdQuery } from "../../queries/get-vehicle-by-id/get-vehicle-by-id.query";
 // import { GetAllVehiclesQuery } from "../../queries/get-all-vehicles/get-all-vehicles.query";
@@ -74,6 +75,9 @@ export const post = async (req: Request, res: Response) => {
  */
 export const get = async (req: Request, res: Response) => {
   try {
+    const query = new GetVehicleByIdQuery(req.query.vehicleId as string);
+    const vehicle = await queryBus.execute(query);
+
     res.status(200).json({ message: "Vehicle(s) retrieved successfully" });
   } catch (error: any) {
     res.status(404).json({ error: error.message });

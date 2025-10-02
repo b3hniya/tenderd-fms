@@ -31,19 +31,22 @@ export const __filename = fileURLToPath(import.meta.url);
 export const __dirname = dirname(__filename);
 
 const createApp = async (): Promise<Express> => {
+  console.log("  📝 Initializing Express app...");
   const app = express();
 
+  console.log("  🛡️  Setting up middleware...");
   app.use(helmet());
-
   app.use(cors(corsOptions));
-
   app.use(requestLogger);
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
+  console.log("  ⚡ Setting up CQRS...");
   const cqrs = await setupCQRS();
   (global as any).cqrs = cqrs;
+  console.log("  ✅ CQRS setup complete");
 
+  console.log("  📖 Setting up Swagger docs...");
   app.use(
     "/api-docs",
     swaggerUi.serve,
@@ -54,10 +57,11 @@ const createApp = async (): Promise<Express> => {
     })
   );
 
+  console.log("  🔀 Setting up dynamic routes...");
   const routes = await dynamicRouter(path.join(__dirname, "modules"));
+  console.log("  ✅ Dynamic routes loaded");
 
   app.use("/api", routes);
-
   app.use(errorMiddleware);
 
   return app;

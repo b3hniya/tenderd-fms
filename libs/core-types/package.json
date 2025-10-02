@@ -2,19 +2,50 @@
   "name": "@tenderd-fms/core-types",
   "version": "1.0.0",
   "description": "Shared types for Tenderd Fleet Management System",
+  "type": "module",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
-    ".": "./src/index.ts",
-    "./enums": "./src/enums/index.ts",
-    "./entity": "./src/entity/index.ts",
-    "./shared": "./src/shared/index.ts",
-    "./api": "./src/api/index.ts",
-    "./api/vehicle": "./src/api/vehicle/index.ts",
-    "./api/telemetry": "./src/api/telemetry/index.ts",
-    "./api/maintenance": "./src/api/maintenance/index.ts",
-    "./api/analytics": "./src/api/analytics/index.ts",
-    "./websocket": "./src/websocket/index.ts"
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts"
+    },
+    "./enums": {
+      "types": "./src/enums/index.ts",
+      "import": "./src/enums/index.ts"
+    },
+    "./entity": {
+      "types": "./src/entity/index.ts",
+      "import": "./src/entity/index.ts"
+    },
+    "./shared": {
+      "types": "./src/shared/index.ts",
+      "import": "./src/shared/index.ts"
+    },
+    "./api": {
+      "types": "./src/api/index.ts",
+      "import": "./src/api/index.ts"
+    },
+    "./api/vehicle": {
+      "types": "./src/api/vehicle/index.ts",
+      "import": "./src/api/vehicle/index.ts"
+    },
+    "./api/telemetry": {
+      "types": "./src/api/telemetry/index.ts",
+      "import": "./src/api/telemetry/index.ts"
+    },
+    "./api/maintenance": {
+      "types": "./src/api/maintenance/index.ts",
+      "import": "./src/api/maintenance/index.ts"
+    },
+    "./api/analytics": {
+      "types": "./src/api/analytics/index.ts",
+      "import": "./src/api/analytics/index.ts"
+    },
+    "./websocket": {
+      "types": "./src/websocket/index.ts",
+      "import": "./src/websocket/index.ts"
+    }
   },
   "scripts": {
     "build": "echo \"No build step needed for TypeScript source\"",

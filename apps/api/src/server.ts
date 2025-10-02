@@ -19,21 +19,32 @@ process.on("uncaughtException", (error) => {
 
 const bootstrap = async () => {
   try {
+    console.log("🚀 Starting bootstrap...");
+
+    console.log("📦 Connecting to database...");
     await connectDatabase();
+    console.log("✅ Database connection completed");
 
+    console.log("🔧 Creating app...");
     const app = await createApp();
+    console.log("✅ App created");
 
+    console.log("🔌 Setting up Socket.IO...");
     const { server } = setupSocketIO(app);
+    console.log("✅ Socket.IO setup complete");
 
     const PORT = process.env.PORT || 4000;
 
     server.listen(PORT, () => {
       console.log(`✅ Server running on port ${PORT}`);
+      console.log(`📚 API Docs: http://localhost:${PORT}/api-docs`);
     });
   } catch (error) {
+    console.error("❌ Bootstrap error:", error);
     logger.error("❌ Failed to start server:", error);
     process.exit(1);
   }
 };
 
+console.log("🎬 Starting application...");
 bootstrap();

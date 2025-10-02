@@ -10,7 +10,13 @@ const createTimeSeriesCollections = async (db: any) => {
 
 export async function connectDatabase(): Promise<void> {
   try {
-    const mongoUri = process.env.MONGODB_URI || "mongodb://localhost:27017/fleet-management";
+    const mongoUri = process.env.MONGODB_URI;
+
+    if (!mongoUri) {
+      logger.warn("⚠️  MONGODB_URI not set, skipping database connection");
+      return;
+    }
+
     await mongoose.connect(mongoUri);
     logger.info("✅ MongoDB connected successfully");
 
@@ -18,7 +24,10 @@ export async function connectDatabase(): Promise<void> {
     await createTimeSeriesCollections(db);
   } catch (error) {
     logger.error("❌ MongoDB connection error:", error);
-    process.exit(1);
+    logger.warn("⚠️  Continuing without database...");
+    if (process.env.MODE === "PROD") {
+      process.exit(1);
+    }
   }
 }
 

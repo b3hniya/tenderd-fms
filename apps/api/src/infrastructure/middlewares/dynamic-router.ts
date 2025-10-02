@@ -88,7 +88,6 @@ const dynamicRouter = async (modulesDir: string): Promise<Router> => {
     await loadControllers(controllersDir, moduleName);
   };
 
-  // Scan all modules in the modules directory
   if (fs.existsSync(modulesDir)) {
     const modules = fs.readdirSync(modulesDir);
 

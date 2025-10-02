@@ -5,12 +5,20 @@ import { Vehicle } from "../../../../vehicle/models/vehicle";
 import { VehicleType, VehicleStatus, FuelType } from "@tenderd-fms/core-types";
 import { NotFoundError } from "../../../../../shared/errors/apiError";
 
+// Mock EventBus
+const mockEventBus = {
+  publish: jest.fn().mockResolvedValue(undefined),
+  registerHandlers: jest.fn(),
+  subscribe: jest.fn(),
+};
+
 describe("SaveTelemetryBatchHandler", () => {
   let handler: SaveTelemetryBatchHandler;
   let vehicleId: string;
 
   beforeEach(async () => {
-    handler = new SaveTelemetryBatchHandler();
+    mockEventBus.publish.mockClear();
+    handler = new SaveTelemetryBatchHandler(mockEventBus as any);
 
     const vehicle = await Vehicle.create({
       vin: "1HGBH41JXMN109186",

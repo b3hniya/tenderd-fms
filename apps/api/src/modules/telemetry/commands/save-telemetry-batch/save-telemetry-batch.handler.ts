@@ -1,31 +1,32 @@
-import { injectable } from "../../../../infrastructure/event-source/container";
+import { injectable, inject } from "../../../../infrastructure/event-source/container";
 import { CommandHandler } from "../../../../infrastructure/decorators/command-handler";
 import { ICommandHandler } from "../../../../infrastructure/event-source/command-bus";
+import { EventBus } from "../../../../infrastructure/event-source/event-bus";
 import { SaveTelemetryBatchCommand } from "./save-telemetry-batch.command";
 import { Telemetry } from "../../models/telemetry";
 import { Vehicle } from "../../../vehicle/models/vehicle";
 import { NotFoundError } from "../../../../shared/errors/apiError";
 import { validateTelemetryContext } from "../../services/telemetry-validator";
+import { TelemetryReceivedEvent } from "../../../../shared/events/telemetry-received-event";
 import logger from "../../../../infrastructure/configs/logger";
 
 @injectable()
 @CommandHandler(SaveTelemetryBatchCommand)
 export class SaveTelemetryBatchHandler implements ICommandHandler<SaveTelemetryBatchCommand> {
+  constructor(@inject(EventBus) private eventBus: EventBus) {}
+
   async execute(command: SaveTelemetryBatchCommand): Promise<any> {
     logger.info(`Saving batch of ${command.telemetryData.length} telemetry records for vehicle: ${command.vehicleId}`);
 
-    // Verify vehicle exists
     const vehicle = await Vehicle.findById(command.vehicleId);
     if (!vehicle) {
       throw new NotFoundError(`Vehicle not found: ${command.vehicleId}`);
     }
 
-    // Sort telemetry by timestamp (oldest first)
     const sortedData = [...command.telemetryData].sort(
       (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
     );
 
-    // Get last telemetry before batch for validation
     let lastTelemetry = await Telemetry.findOne({ vehicleId: command.vehicleId }).sort({ timestamp: -1 }).lean();
 
     const telemetryRecords = [];
@@ -36,7 +37,6 @@ export class SaveTelemetryBatchHandler implements ICommandHandler<SaveTelemetryB
       issues: [] as any[],
     };
 
-    // Process each telemetry record
     for (const data of sortedData) {
       const validation = validateTelemetryContext(
         {
@@ -80,14 +80,11 @@ export class SaveTelemetryBatchHandler implements ICommandHandler<SaveTelemetryB
 
       telemetryRecords.push(telemetryRecord);
 
-      // Update lastTelemetry for next iteration validation
       lastTelemetry = telemetryRecord as any;
     }
 
-    // Bulk insert all telemetry records
     const savedRecords = await Telemetry.insertMany(telemetryRecords);
 
-    // Update vehicle with latest telemetry
     const latestData = sortedData[sortedData.length - 1];
     await Vehicle.findByIdAndUpdate(command.vehicleId, {
       $set: {
@@ -110,6 +107,19 @@ export class SaveTelemetryBatchHandler implements ICommandHandler<SaveTelemetryB
 
     logger.info(
       `Batch saved for vehicle ${command.vehicleId}. Valid: ${validationResults.valid}, Invalid: ${validationResults.invalid}`
+    );
+
+    await this.eventBus.publish(
+      new TelemetryReceivedEvent(command.vehicleId, {
+        location: latestData.location,
+        speed: latestData.speed,
+        fuelLevel: latestData.fuelLevel,
+        odometer: latestData.odometer,
+        engineTemp: latestData.engineTemp,
+        engineRPM: latestData.engineRPM,
+        timestamp: latestData.timestamp,
+        validation: telemetryRecords[telemetryRecords.length - 1].validation,
+      })
     );
 
     return {

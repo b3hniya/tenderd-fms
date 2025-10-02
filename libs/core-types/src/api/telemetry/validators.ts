@@ -43,10 +43,25 @@ export const SaveTelemetryRequestSchema = z.object({
 });
 
 export const SaveTelemetryBatchRequestSchema = z.object({
+  vehicleId: z.string().min(1, 'Vehicle ID is required'),
   telemetryData: z
-    .array(SaveTelemetryRequestSchema)
+    .array(
+      z.object({
+        location: z.object({
+          lat: z.number().min(-90).max(90),
+          lng: z.number().min(-180).max(180),
+        }),
+        speed: z.number().min(0).max(300),
+        fuelLevel: z.number().min(0).max(100),
+        odometer: z.number().min(0),
+        engineTemp: z.number().min(-50).max(200),
+        engineRPM: z.number().min(0).max(10000).optional(),
+        timestamp: z.coerce.date(),
+      }),
+    )
     .min(1, 'Batch must contain at least one telemetry record')
     .max(1000, 'Batch size exceeds maximum of 1000 records'),
+  deviceId: z.string().optional(),
 });
 
 export const GetTelemetryHistoryRequestSchema = z.object({

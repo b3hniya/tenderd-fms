@@ -1,12 +1,12 @@
 import { Request, Response, NextFunction } from "express";
-import { CreateVehicleCommand } from "../../commands/create-vehicle/create-vehicle.command";
-import { GetAllVehiclesQuery } from "../../queries/get-all-vehicles/get-all-vehicles.query";
+import { CreateVehicleCommand } from "../commands/create-vehicle/create-vehicle.command";
+import { GetAllVehiclesQuery } from "../queries/get-all-vehicles/get-all-vehicles.query";
 
 const { commandBus, queryBus } = (global as any).cqrs;
 
 /**
  * @swagger
- * /api/vehicle/v1:
+ * /api/vehicle:
  *   post:
  *     summary: Create a new vehicle
  *     description: Creates a new vehicle in the fleet management system
@@ -90,7 +90,7 @@ export const post = async (req: Request, res: Response, next: NextFunction) => {
 
 /**
  * @swagger
- * /api/vehicle/v1:
+ * /api/vehicle:
  *   get:
  *     summary: Get vehicle(s)
  *     description: Get a specific vehicle by ID, VIN, or get all vehicles with pagination

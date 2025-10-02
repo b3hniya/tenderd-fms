@@ -1,0 +1,29 @@
+{
+  "normal": {
+    "name": "Normal Operation",
+    "vehicles": 3,
+    "transmitInterval": 30000,
+    "offlineProbability": 0,
+    "corruptionRate": 0
+  },
+  "offline-test": {
+    "name": "Offline Scenario Test",
+    "vehicles": 1,
+    "transmitInterval": 30000,
+    "offlineAt": 60000,
+    "offlineDuration": 300000
+  },
+  "corrupted-data": {
+    "name": "Data Corruption Test",
+    "vehicles": 1,
+    "transmitInterval": 30000,
+    "corruptionRate": 0.3,
+    "corruptionTypes": ["location-jump", "odometer-decrease", "extreme-speed"]
+  },
+  "fleet-stress": {
+    "name": "Fleet Stress Test",
+    "vehicles": 10,
+    "transmitInterval": 10000,
+    "offlineProbability": 0.05
+  }
+}

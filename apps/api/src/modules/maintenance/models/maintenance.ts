@@ -1,18 +1,5 @@
 import mongoose, { Document, Schema } from "mongoose";
-
-export enum MaintenanceType {
-  SCHEDULED = "SCHEDULED",
-  REPAIR = "REPAIR",
-  INSPECTION = "INSPECTION",
-  EMERGENCY = "EMERGENCY",
-}
-
-export enum MaintenanceStatus {
-  SCHEDULED = "SCHEDULED",
-  IN_PROGRESS = "IN_PROGRESS",
-  COMPLETED = "COMPLETED",
-  CANCELLED = "CANCELLED",
-}
+import { MaintenanceType, MaintenanceStatus } from "@tenderd-fms/core-types";
 
 export interface IMaintenance extends Document {
   vehicleId: string;
@@ -136,18 +123,10 @@ MaintenanceSchema.virtual("duration").get(function () {
 
 MaintenanceSchema.pre("save", function (next) {
   if (this.parts && this.parts.length > 0) {
-    const partsCost = this.parts.reduce(
-      (sum, part) => sum + part.quantity * part.cost,
-      0
-    );
+    const partsCost = this.parts.reduce((sum, part) => sum + part.quantity * part.cost, 0);
     this.totalCost = partsCost + (this.laborCost || 0);
   }
   next();
 });
 
-export const Maintenance = mongoose.model<IMaintenance>(
-  "Maintenance",
-  MaintenanceSchema,
-  "maintenance"
-);
-
+export const Maintenance = mongoose.model<IMaintenance>("Maintenance", MaintenanceSchema, "maintenance");

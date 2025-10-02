@@ -1,21 +1,28 @@
 export enum VehicleType {
+  SEDAN = 'SEDAN',
+  SUV = 'SUV',
   TRUCK = 'TRUCK',
   VAN = 'VAN',
-  CAR = 'CAR',
+  BUS = 'BUS',
   MOTORCYCLE = 'MOTORCYCLE',
+  OTHER = 'OTHER',
 }
 
 export enum VehicleStatus {
   ACTIVE = 'ACTIVE',
   MAINTENANCE = 'MAINTENANCE',
+  INACTIVE = 'INACTIVE',
   OUT_OF_SERVICE = 'OUT_OF_SERVICE',
 }
 
 export enum FuelType {
-  ELECTRIC = 'ELECTRIC',
-  DIESEL = 'DIESEL',
   GASOLINE = 'GASOLINE',
+  DIESEL = 'DIESEL',
+  ELECTRIC = 'ELECTRIC',
   HYBRID = 'HYBRID',
+  CNG = 'CNG',
+  LPG = 'LPG',
+  OTHER = 'OTHER',
 }
 
 export enum ConnectionStatus {

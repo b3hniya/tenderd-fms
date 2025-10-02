@@ -1,47 +1,18 @@
 import mongoose, { Document, Schema } from "mongoose";
-
-export enum VehicleType {
-  TRUCK = "TRUCK",
-  VAN = "VAN",
-  CAR = "CAR",
-  MOTORCYCLE = "MOTORCYCLE",
-}
-
-export enum VehicleStatus {
-  ACTIVE = "ACTIVE",
-  MAINTENANCE = "MAINTENANCE",
-  OUT_OF_SERVICE = "OUT_OF_SERVICE",
-}
-
-export enum FuelType {
-  ELECTRIC = "ELECTRIC",
-  DIESEL = "DIESEL",
-  GASOLINE = "GASOLINE",
-  HYBRID = "HYBRID",
-}
-
-export enum ConnectionStatus {
-  ONLINE = "ONLINE",
-  STALE = "STALE",
-  OFFLINE = "OFFLINE",
-}
+import { VehicleType, VehicleStatus, FuelType, ConnectionStatus } from "@tenderd-fms/core-types";
 
 export interface IVehicle extends Document {
-  // Identification
   vin: string;
   licensePlate: string;
 
-  // Static Information
   vehicleModel: string;
   manufacturer: string;
   year: number;
   type: VehicleType;
   fuelType: FuelType;
 
-  // Operational Status
   status: VehicleStatus;
 
-  // Current Telemetry (denormalized for quick access)
   currentTelemetry?: {
     location: {
       type: "Point";
@@ -54,19 +25,16 @@ export interface IVehicle extends Document {
     timestamp: Date;
   };
 
-  // Connection Status
   connectionStatus: ConnectionStatus;
   lastSeenAt: Date;
   offlineSince?: Date;
 
-  // Metadata
   createdAt: Date;
   updatedAt: Date;
 }
 
 const VehicleSchema = new Schema<IVehicle>(
   {
-    // Identification
     vin: {
       type: String,
       required: true,
@@ -85,7 +53,6 @@ const VehicleSchema = new Schema<IVehicle>(
       index: true,
     },
 
-    // Static Information
     vehicleModel: {
       type: String,
       required: true,
@@ -115,7 +82,6 @@ const VehicleSchema = new Schema<IVehicle>(
       required: true,
     },
 
-    // Operational Status
     status: {
       type: String,
       enum: Object.values(VehicleStatus),
@@ -123,54 +89,57 @@ const VehicleSchema = new Schema<IVehicle>(
       index: true,
     },
 
-    // Current Telemetry (GeoJSON for location queries)
     currentTelemetry: {
-      location: {
-        type: {
-          type: String,
-          enum: ["Point"],
-          default: "Point",
-        },
-        coordinates: {
-          type: [Number],
-          required: true,
-          validate: {
-            validator: function (coords: number[]) {
-              return (
-                coords.length === 2 &&
-                coords[0] >= -180 &&
-                coords[0] <= 180 && // longitude
-                coords[1] >= -90 &&
-                coords[1] <= 90
-              ); // latitude
+      type: {
+        location: {
+          type: {
+            type: String,
+            enum: ["Point"],
+            default: "Point",
+          },
+          coordinates: {
+            type: [Number],
+            required: function (this: any) {
+              return this.currentTelemetry != null;
             },
-            message: "Invalid coordinates",
+            validate: {
+              validator: function (coords: number[]) {
+                return (
+                  coords.length === 2 &&
+                  coords[0] >= -180 &&
+                  coords[0] <= 180 && // longitude
+                  coords[1] >= -90 &&
+                  coords[1] <= 90
+                ); // latitude
+              },
+              message: "Invalid coordinates",
+            },
           },
         },
+        speed: {
+          type: Number,
+          min: 0,
+          max: 300,
+        },
+        fuelLevel: {
+          type: Number,
+          min: 0,
+          max: 100,
+        },
+        odometer: {
+          type: Number,
+          min: 0,
+        },
+        engineTemp: {
+          type: Number,
+          min: -50,
+          max: 200,
+        },
+        timestamp: Date,
       },
-      speed: {
-        type: Number,
-        min: 0,
-        max: 300,
-      },
-      fuelLevel: {
-        type: Number,
-        min: 0,
-        max: 100,
-      },
-      odometer: {
-        type: Number,
-        min: 0,
-      },
-      engineTemp: {
-        type: Number,
-        min: -50,
-        max: 200,
-      },
-      timestamp: Date,
+      required: false,
     },
 
-    // Connection Status
     connectionStatus: {
       type: String,
       enum: Object.values(ConnectionStatus),
@@ -191,17 +160,13 @@ const VehicleSchema = new Schema<IVehicle>(
   }
 );
 
-// Indexes for performance
 VehicleSchema.index({ "currentTelemetry.location": "2dsphere" });
 VehicleSchema.index({ status: 1, connectionStatus: 1 });
 VehicleSchema.index({ type: 1 });
 VehicleSchema.index({ lastSeenAt: -1 });
 
-// Virtual for computed fields
 VehicleSchema.virtual("isOnline").get(function (this: IVehicle) {
   return this.connectionStatus === ConnectionStatus.ONLINE;
 });
 
-export const Vehicle = mongoose.model<IVehicle>("Vehicle", VehicleSchema);
-
-
+export const Vehicle = mongoose.model<IVehicle>("Vehicle", VehicleSchema, "vehicle");

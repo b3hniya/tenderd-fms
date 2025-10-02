@@ -1,4 +1,4 @@
-import { VehicleType, VehicleStatus, FuelType } from '../enums/index.js';
+import { VehicleType, VehicleStatus, FuelType } from '../enums/index';
 
 /**
  * Static test vehicle data for seeding and simulation

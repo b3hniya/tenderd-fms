@@ -37,7 +37,7 @@ const VehicleSchema = new Schema<IVehicle>(
   {
     _id: {
       type: String,
-      required: true,
+      required: false, // Auto-generated in pre-save hook
     },
     vin: {
       type: String,
@@ -164,6 +164,14 @@ const VehicleSchema = new Schema<IVehicle>(
     _id: false,
   }
 );
+
+// Auto-generate _id if not provided
+VehicleSchema.pre("save", function (next) {
+  if (!this._id) {
+    this._id = new mongoose.Types.ObjectId().toString();
+  }
+  next();
+});
 
 VehicleSchema.index({ "currentTelemetry.location": "2dsphere" });
 VehicleSchema.index({ status: 1, connectionStatus: 1 });

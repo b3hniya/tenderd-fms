@@ -1,1 +1,1 @@
-export * from './vehicles.js';
+export * from './vehicles';

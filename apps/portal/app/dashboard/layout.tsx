@@ -5,19 +5,19 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { Dialog, DialogBackdrop, DialogPanel, TransitionChild } from '@headlessui/react';
 import {
-  Cog6ToothIcon,
-  FolderIcon,
-  GlobeAltIcon,
-  ServerIcon,
+  ChartBarIcon,
+  TruckIcon,
+  MapPinIcon,
+  WrenchScrewdriverIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { Bars3Icon, MagnifyingGlassIcon } from '@heroicons/react/20/solid';
 
 const navigation = [
-  { name: 'Analytics', href: '/dashboard/analytics', icon: FolderIcon },
-  { name: 'Maintenance', href: '/dashboard/maintenance', icon: ServerIcon },
-  { name: 'Vehicles', href: '/dashboard/vehicles', icon: GlobeAltIcon },
-  { name: 'Tracking', href: '/dashboard/tracking', icon: Cog6ToothIcon },
+  { name: 'Analytics', href: '/dashboard/analytics', icon: ChartBarIcon },
+  { name: 'Vehicles', href: '/dashboard/vehicles', icon: TruckIcon },
+  { name: 'Tracking', href: '/dashboard/tracking', icon: MapPinIcon },
+  { name: 'Maintenance', href: '/dashboard/maintenance', icon: WrenchScrewdriverIcon },
 ];
 
 function classNames(...classes: string[]): string {

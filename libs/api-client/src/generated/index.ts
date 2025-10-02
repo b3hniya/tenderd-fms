@@ -10,6 +10,7 @@ export type { OpenAPIConfig } from './core/OpenAPI';
 export type { Error } from './models/Error';
 export type { Success } from './models/Success';
 
+export { AnalyticsService } from './services/AnalyticsService';
 export { MaintenanceService } from './services/MaintenanceService';
 export { TelemetryService } from './services/TelemetryService';
 export { VehicleService } from './services/VehicleService';

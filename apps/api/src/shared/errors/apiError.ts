@@ -9,3 +9,21 @@ export const createAPIError = (statusCode: number, message: string) => ({
   message,
   type: "APIError",
 });
+
+export class NotFoundError extends Error {
+  public statusCode = 404;
+
+  constructor(message: string) {
+    super(message);
+    this.name = "NotFoundError";
+  }
+}
+
+export class BadRequestError extends Error {
+  public statusCode = 400;
+
+  constructor(message: string) {
+    super(message);
+    this.name = "BadRequestError";
+  }
+}

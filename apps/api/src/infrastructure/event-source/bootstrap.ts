@@ -19,9 +19,9 @@ export async function setupCQRS() {
   const srcDir = path.resolve(__dirname, "../..");
   const modulesDir = path.join(srcDir, "modules");
 
-  Container.register(CommandBus, { useClass: CommandBus });
-  Container.register(QueryBus, { useClass: QueryBus });
-  Container.register(EventBus, { useClass: EventBus });
+  Container.registerSingleton(CommandBus);
+  Container.registerSingleton(QueryBus);
+  Container.registerSingleton(EventBus);
 
   let commandHandlerModules: any[] = [];
   let queryHandlerModules: any[] = [];

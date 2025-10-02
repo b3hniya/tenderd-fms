@@ -7,7 +7,7 @@ import logger from "../../../../infrastructure/configs/logger";
 
 @injectable()
 @EventHandler(TelemetryReceivedEvent)
-export class UpdateAnalyticsOnTelemetryHandler implements IEventHandler<TelemetryReceivedEvent> {
+export class UpdateAnalyticsHandler implements IEventHandler<TelemetryReceivedEvent> {
   async handle(event: TelemetryReceivedEvent): Promise<void> {
     logger.info(`Updating analytics for vehicle: ${event.vehicleId}`);
 

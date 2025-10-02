@@ -4,6 +4,7 @@ import { TelemetryGenerator } from '../services/TelemetryGenerator.js';
 import { OpenAPI } from '@tenderd-fms/api-client';
 import { getRoute, getRandomPosition } from '../utils/route-generator.js';
 import { CorruptionType } from '../types/scenario.types.js';
+import { getVehiclesForSimulation } from '@tenderd-fms/core-types';
 import logger from '../utils/logger.js';
 
 /**
@@ -34,8 +35,17 @@ export class ScenarioRunner {
       count: this.scenarioConfig.vehicles,
     });
 
-    for (let i = 0; i < this.scenarioConfig.vehicles; i++) {
-      const vehicleId = this.generateVehicleId(i);
+    const seedVehicles = getVehiclesForSimulation(this.scenarioConfig.vehicles);
+
+    if (seedVehicles.length < this.scenarioConfig.vehicles) {
+      logger.warn('Not enough seed vehicles available', {
+        requested: this.scenarioConfig.vehicles,
+        available: seedVehicles.length,
+      });
+    }
+
+    for (let i = 0; i < seedVehicles.length; i++) {
+      const vehicleId = seedVehicles[i]._id;
       const simulator = this.createSimulator(vehicleId, i);
       this.simulators.push(simulator);
     }

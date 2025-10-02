@@ -35,6 +35,10 @@ export interface IVehicle extends Document {
 
 const VehicleSchema = new Schema<IVehicle>(
   {
+    _id: {
+      type: String,
+      required: true,
+    },
     vin: {
       type: String,
       required: true,
@@ -156,7 +160,8 @@ const VehicleSchema = new Schema<IVehicle>(
   },
   {
     timestamps: true,
-    collection: "vehicles",
+    collection: "vehicle",
+    _id: false,
   }
 );
 

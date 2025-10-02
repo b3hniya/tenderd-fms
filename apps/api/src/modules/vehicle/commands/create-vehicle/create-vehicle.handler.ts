@@ -4,6 +4,7 @@ import { ICommandHandler } from "../../../../infrastructure/event-source/command
 import { CreateVehicleCommand } from "./create-vehicle.command";
 import { Vehicle } from "../../models/vehicle";
 import logger from "../../../../infrastructure/configs/logger";
+import mongoose from "mongoose";
 
 @injectable()
 @CommandHandler(CreateVehicleCommand)
@@ -11,7 +12,10 @@ export class CreateVehicleHandler implements ICommandHandler<CreateVehicleComman
   async execute(command: CreateVehicleCommand): Promise<any> {
     logger.info(`Creating vehicle with VIN: ${command.vin}`);
 
+    const vehicleId = new mongoose.Types.ObjectId().toString();
+
     const vehicle = await Vehicle.create({
+      _id: vehicleId,
       vin: command.vin,
       licensePlate: command.licensePlate,
       vehicleModel: command.vehicleModel,

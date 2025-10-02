@@ -1,14 +1,12 @@
-import { Request, Response } from "express";
-import { GetVehicleByIdQuery } from "../../queries/get-vehicle-by-id/get-vehicle-by-id.query";
-// import { CreateVehicleCommand } from "../../commands/create-vehicle/create-vehicle-command";
-// import { GetVehicleByIdQuery } from "../../queries/get-vehicle-by-id/get-vehicle-by-id.query";
-// import { GetAllVehiclesQuery } from "../../queries/get-all-vehicles/get-all-vehicles.query";
+import { Request, Response, NextFunction } from "express";
+import { CreateVehicleCommand } from "../../commands/create-vehicle/create-vehicle.command";
+import { GetAllVehiclesQuery } from "../../queries/get-all-vehicles/get-all-vehicles.query";
 
 const { commandBus, queryBus } = (global as any).cqrs;
 
 /**
  * @swagger
- * /api/vehicle/v1/vehicle:
+ * /api/vehicle/v1:
  *   post:
  *     summary: Create a new vehicle
  *     description: Creates a new vehicle in the fleet management system
@@ -20,51 +18,120 @@ const { commandBus, queryBus } = (global as any).cqrs;
  *           schema:
  *             type: object
  *             required:
- *               - vehicleId
- *               - model
+ *               - vin
+ *               - licensePlate
+ *               - vehicleModel
+ *               - manufacturer
+ *               - year
  *               - type
+ *               - fuelType
  *             properties:
- *               vehicleId:
+ *               vin:
  *                 type: string
- *                 example: "TRUCK-001"
- *               model:
+ *                 example: "1HGBH41JXMN109186"
+ *                 description: Vehicle Identification Number (17 characters)
+ *               licensePlate:
  *                 type: string
- *                 example: "Tesla Semi"
+ *                 example: "ABC-1234"
+ *               vehicleModel:
+ *                 type: string
+ *                 example: "Model S"
+ *               manufacturer:
+ *                 type: string
+ *                 example: "Tesla"
+ *               year:
+ *                 type: number
+ *                 example: 2024
  *               type:
  *                 type: string
- *                 example: "Electric Truck"
+ *                 enum: [SEDAN, SUV, TRUCK, VAN, BUS, MOTORCYCLE, OTHER]
+ *                 example: "SEDAN"
+ *               fuelType:
+ *                 type: string
+ *                 enum: [GASOLINE, DIESEL, ELECTRIC, HYBRID, CNG, LPG, OTHER]
+ *                 example: "ELECTRIC"
  *               status:
  *                 type: string
- *                 enum: [active, maintenance, inactive]
- *                 default: active
+ *                 enum: [ACTIVE, MAINTENANCE, INACTIVE, OUT_OF_SERVICE]
+ *                 default: ACTIVE
  *     responses:
  *       201:
  *         description: Vehicle created successfully
+ *       400:
+ *         description: Validation error
  *       500:
  *         description: Internal server error
  */
-export const post = async (req: Request, res: Response) => {
+export const post = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    res.status(201).json({ message: "Vehicle created successfully" });
+    const { vin, licensePlate, vehicleModel, manufacturer, year, type, fuelType, status } = req.body;
+
+    const command = new CreateVehicleCommand(
+      vin,
+      licensePlate,
+      vehicleModel,
+      manufacturer,
+      year,
+      type,
+      fuelType,
+      status
+    );
+
+    const vehicle = await commandBus.execute(command);
+
+    res.status(201).json({
+      success: true,
+      data: vehicle,
+    });
   } catch (error: any) {
-    res.status(500).json({ error: error.message });
+    next(error);
   }
 };
 
 /**
  * @swagger
- * /api/vehicle/v1/vehicle:
+ * /api/vehicle/v1:
  *   get:
  *     summary: Get vehicle(s)
- *     description: Get a specific vehicle by ID or all vehicles
+ *     description: Get a specific vehicle by ID, VIN, or get all vehicles with pagination
  *     tags: [Vehicle]
  *     parameters:
  *       - in: query
- *         name: vehicleId
+ *         name: id
  *         schema:
  *           type: string
- *         description: Optional vehicle ID to get a specific vehicle
- *         example: "TRUCK-001"
+ *         description: MongoDB ObjectId of the vehicle
+ *         example: "507f1f77bcf86cd799439011"
+ *       - in: query
+ *         name: vin
+ *         schema:
+ *           type: string
+ *         description: Vehicle Identification Number (VIN)
+ *         example: "1HGBH41JXMN109186"
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: number
+ *           default: 1
+ *         description: Page number for pagination
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: number
+ *           default: 10
+ *         description: Number of items per page
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [ACTIVE, MAINTENANCE, INACTIVE, OUT_OF_SERVICE]
+ *         description: Filter by vehicle status
+ *       - in: query
+ *         name: type
+ *         schema:
+ *           type: string
+ *           enum: [SEDAN, SUV, TRUCK, VAN, BUS, MOTORCYCLE, OTHER]
+ *         description: Filter by vehicle type
  *     responses:
  *       200:
  *         description: Vehicle(s) retrieved successfully
@@ -73,13 +140,42 @@ export const post = async (req: Request, res: Response) => {
  *       500:
  *         description: Internal server error
  */
-export const get = async (req: Request, res: Response) => {
+export const get = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const query = new GetVehicleByIdQuery(req.query.vehicleId as string);
-    const vehicle = await queryBus.execute(query);
+    const { id, vin, status, type } = req.query;
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
 
-    res.status(200).json({ message: "Vehicle(s) retrieved successfully" });
+    const query = new GetAllVehiclesQuery(
+      page,
+      limit,
+      status as any,
+      type as any,
+      vin as string | undefined,
+      id as string | undefined
+    );
+
+    const result = await queryBus.execute(query);
+
+    if ((id || vin) && result.data.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: id ? `Vehicle with ID ${id} not found` : `Vehicle with VIN ${vin} not found`,
+      });
+    }
+
+    if (id || vin) {
+      return res.status(200).json({
+        success: true,
+        data: result.data[0],
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      ...result,
+    });
   } catch (error: any) {
-    res.status(404).json({ error: error.message });
+    next(error);
   }
 };

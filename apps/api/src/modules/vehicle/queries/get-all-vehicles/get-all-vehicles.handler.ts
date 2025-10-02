@@ -7,14 +7,47 @@ import logger from "../../../../infrastructure/configs/logger";
 
 @injectable()
 @QueryHandler(GetAllVehiclesQuery)
-export class GetAllVehicles implements IQueryHandler<GetAllVehiclesQuery> {
+export class GetAllVehiclesHandler implements IQueryHandler<GetAllVehiclesQuery> {
   async execute(query: GetAllVehiclesQuery): Promise<any> {
-    logger.info("Getting all vehicles");
+    logger.info("Getting all vehicles with filters");
 
-    const vehicles = await Vehicle.find();
+    const filter: any = {};
 
-    return vehicles;
+    if (query.vin) {
+      filter.vin = query.vin.toUpperCase();
+    }
+
+    if (query.id) {
+      filter._id = query.id;
+    }
+
+    if (query.status) {
+      filter.status = query.status;
+    }
+
+    if (query.type) {
+      filter.type = query.type;
+    }
+
+    const skip = (query.page - 1) * query.limit;
+
+    const [vehicles, total] = await Promise.all([
+      Vehicle.find(filter).skip(skip).limit(query.limit).sort({ createdAt: -1 }).lean(),
+      Vehicle.countDocuments(filter),
+    ]);
+
+    const totalPages = Math.ceil(total / query.limit);
+
+    logger.info(`Found ${vehicles.length} vehicles out of ${total} total`);
+
+    return {
+      data: vehicles,
+      pagination: {
+        page: query.page,
+        limit: query.limit,
+        total,
+        totalPages,
+      },
+    };
   }
 }
-
-

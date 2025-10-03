@@ -12,7 +12,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "seed:vehicles": "tsx scripts/seed-vehicles.ts"
+    "seed:vehicles": "tsx scripts/seed-vehicles.ts",
+    "seed:analytics": "tsx scripts/seed-analytics.ts"
   },
   "dependencies": {
     "@tenderd-fms/core-types": "workspace:*",
@@ -25,6 +26,7 @@
     "joi": "^17.11.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.18.3",
+    "node-cron": "^4.2.1",
     "passport": "^0.6.0",
     "reflect-metadata": "^0.2.2",
     "socket.io": "^4.8.1",
@@ -43,6 +45,7 @@
     "@types/jsonwebtoken": "^9.0.5",
     "@types/mongoose": "^5.11.97",
     "@types/node": "^20.9.0",
+    "@types/node-cron": "^3.0.11",
     "@types/socket.io": "^3.0.2",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",

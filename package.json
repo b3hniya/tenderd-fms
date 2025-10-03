@@ -14,7 +14,8 @@
     "prepare": "husky",
     "lint-staged": "lint-staged",
     "clean": "turbo run clean",
-    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\""
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
+    "transmit": "pnpm --filter @tenderd-fms/iot-transmitter start"
   },
   "lint-staged": {
     "**/*.{ts,tsx,js,jsx}": [

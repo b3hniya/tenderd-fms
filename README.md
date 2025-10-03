@@ -245,7 +245,7 @@ pnpm install
 
 ```env
 PORT=4000
-MONGO_URI=mongodb://localhost:27017/tenderd-fms
+MONGODB_URI=mongodb://localhost:27017/tenderd-fms
 NODE_ENV=development
 LOG_LEVEL=info
 ```
@@ -277,7 +277,11 @@ mongod --dbpath /path/to/data
 ### 4. Seed Database
 
 ```bash
-pnpm --filter @tenderd-fms/api seed
+pnpm --filter @tenderd-fms/api seed:vehicles
+```
+
+```bash
+pnpm --filter @tenderd-fms/api seed:analytics
 ```
 
 Creates 5 sample vehicles with initial telemetry and maintenance records.
@@ -299,6 +303,9 @@ pnpm --filter @tenderd-fms/portal dev
 **Terminal 3 - IoT Transmitter:**
 
 ```bash
+pnpm transmit
+
+# OR
 pnpm --filter @tenderd-fms/iot-transmitter start
 ```
 

@@ -10,7 +10,7 @@ import type {
   VehicleReconnectedEvent,
   MaintenanceAlertEvent,
   AlertEvent,
-} from '@tenderd-fms/core-types/websocket';
+} from '@tenderd-fms/core-types';
 
 /**
  * Complete event map for type-safe WebSocket communication

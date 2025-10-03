@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { ValidationSeverity } from '../../enums';
 
-const GeoJSONPointSchema = z.object({
+export const GeoJSONPointSchema = z.object({
   type: z.literal('Point'),
   coordinates: z
     .tuple([

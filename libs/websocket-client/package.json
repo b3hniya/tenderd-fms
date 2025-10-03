@@ -2,15 +2,16 @@
   "name": "@tenderd-fms/websocket-client",
   "version": "1.0.0",
   "description": "Type-safe WebSocket client for Tenderd Fleet Management System",
-  "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "require": "./dist/index.js",
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
     "./mock": {
+      "require": "./dist/mock/mock-client.js",
       "import": "./dist/mock/mock-client.js",
       "types": "./dist/mock/mock-client.d.ts"
     }

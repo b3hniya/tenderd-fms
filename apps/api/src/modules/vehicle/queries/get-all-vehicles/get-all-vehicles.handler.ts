@@ -40,8 +40,22 @@ export class GetAllVehiclesHandler implements IQueryHandler<GetAllVehiclesQuery>
 
     logger.info(`Found ${vehicles.length} vehicles out of ${total} total`);
 
+    const transformedVehicles = vehicles.map((v: any) => {
+      if (v.currentTelemetry?.location?.coordinates) {
+        const [lng, lat] = v.currentTelemetry.location.coordinates;
+        return {
+          ...v,
+          currentTelemetry: {
+            ...v.currentTelemetry,
+            location: { lat, lng },
+          },
+        };
+      }
+      return v;
+    });
+
     return {
-      data: vehicles,
+      data: transformedVehicles,
       pagination: {
         page: query.page,
         limit: query.limit,

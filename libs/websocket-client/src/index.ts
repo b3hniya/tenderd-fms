@@ -39,4 +39,4 @@ export type {
   VehicleReconnectedEvent,
   MaintenanceAlertEvent,
   AlertEvent,
-} from '@tenderd-fms/core-types/websocket';
+} from '@tenderd-fms/core-types';

@@ -17,16 +17,25 @@ export class BroadcastTelemetryHandler implements IEventHandler<TelemetryReceive
       return;
     }
 
+    const location = (event.telemetryData.location as any)?.coordinates
+      ? {
+          lat: (event.telemetryData.location as any).coordinates[1],
+          lng: (event.telemetryData.location as any).coordinates[0],
+        }
+      : event.telemetryData.location;
+
     io.emit("telemetry:update", {
       vehicleId: event.vehicleId,
-      location: event.telemetryData.location,
-      speed: event.telemetryData.speed,
-      fuelLevel: event.telemetryData.fuelLevel,
-      odometer: event.telemetryData.odometer,
-      engineTemp: event.telemetryData.engineTemp,
-      engineRPM: event.telemetryData.engineRPM,
-      timestamp: event.telemetryData.timestamp,
-      validation: event.telemetryData.validation,
+      telemetry: {
+        location,
+        speed: event.telemetryData.speed,
+        fuelLevel: event.telemetryData.fuelLevel,
+        odometer: event.telemetryData.odometer,
+        engineTemp: event.telemetryData.engineTemp,
+        engineRPM: event.telemetryData.engineRPM,
+        timestamp: event.telemetryData.timestamp,
+        validation: event.telemetryData.validation,
+      },
     });
 
     logger.info(`Telemetry broadcasted for vehicle ${event.vehicleId}`);

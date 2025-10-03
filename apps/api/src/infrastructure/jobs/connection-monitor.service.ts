@@ -82,6 +82,18 @@ export class ConnectionMonitorService extends BaseJob {
             `Vehicle ${vehicle.vin} connection status changed: ${currentStatus} → ${newStatus} (last seen ${Math.round(timeSinceLastSeen / 1000)}s ago)`
           );
 
+          // Broadcast status change via WebSocket
+          const io = (global as any).io;
+          if (io) {
+            io.emit("vehicle:status-change", {
+              vehicleId: vehicle._id.toString(),
+              vin: vehicle.vin,
+              oldStatus: currentStatus,
+              newStatus: newStatus,
+              timestamp: now.toISOString(),
+            });
+          }
+
           if (newStatus === ConnectionStatus.OFFLINE && currentStatus !== ConnectionStatus.OFFLINE) {
             await this.eventBus.publish(
               new VehicleOfflineEvent(vehicle._id.toString(), vehicle.vin, new Date(vehicle.lastSeenAt), currentStatus)

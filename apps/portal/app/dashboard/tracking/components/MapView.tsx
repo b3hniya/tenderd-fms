@@ -14,7 +14,6 @@ import {
 } from '@heroicons/react/24/outline';
 import { ConnectionStatus } from '@tenderd-fms/core-types';
 
-// Fix Leaflet default icon issue with Next.js
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
@@ -55,7 +54,6 @@ interface MapViewProps {
   onVehicleClick: (vehicleId: string) => void;
 }
 
-// Create custom markers
 function createCustomIcon(status: ConnectionStatus, isSelected: boolean) {
   const colors = {
     [ConnectionStatus.ONLINE]: { bg: '#10b981', ring: '#34d399' },

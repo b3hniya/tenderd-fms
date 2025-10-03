@@ -21,7 +21,7 @@ import type {
 import { ConnectionStatus } from '@tenderd-fms/core-types';
 
 // Dynamically import map component (client-side only)
-const MapView = dynamic(() => import('./MapView'), {
+const MapView = dynamic(() => import('./components/MapView'), {
   ssr: false,
   loading: () => (
     <div className="flex h-full items-center justify-center bg-gray-900">
